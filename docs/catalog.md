@@ -4,6 +4,7 @@ All skills in this repository, sorted alphabetically with tags.
 
 | Skill | Description | Tags |
 |-------|-------------|------|
+| [alternatives-analysis](../skills/alternatives-analysis/SKILL.md) | Structured framework for comparing options and recommending decisions | `general`, `developer`, `manager`, `analyst`, `executive` |
 | [async-messaging](../skills/async-messaging/SKILL.md) | Event-driven architecture and asynchronous messaging patterns | `developer`, `operations` |
 | [caching-strategies](../skills/caching-strategies/SKILL.md) | Caching design across HTTP, CDN, app, and client layers | `developer`, `operations` |
 | [charts](../skills/charts/SKILL.md) | Data visualization and charting best practices | `developer`, `designer`, `analyst` |
@@ -13,6 +14,7 @@ All skills in this repository, sorted alphabetically with tags.
 | [docker](../skills/docker/SKILL.md) | Docker and container best practices with security-first design | `developer`, `operations` |
 | [git-workflow](../skills/git-workflow/SKILL.md) | Conventional commits, branching, PR conventions | `developer`, `manager` |
 | [logging-metrics](../skills/logging-metrics/SKILL.md) | Structured logging and metrics design for observability | `developer`, `operations`, `analyst` |
+| [large-change](../skills/large-change/SKILL.md) | Workflow for planning and shipping large, multi-phase changes | `developer`, `manager`, `operations` |
 | [markdown-docs](../skills/markdown-docs/SKILL.md) | Documentation structure, formatting, linking | `developer`, `writer`, `general` |
 | [meeting-agendas](../skills/meeting-agendas/SKILL.md) | Structuring agendas, notes, and action items | `manager`, `operations`, `communication` |
 | [prompt-writing](../skills/prompt-writing/SKILL.md) | Best practices for writing and evaluating LLM prompts | `general`, `developer`, `writer` |

@@ -6,6 +6,8 @@ Skills for engineering managers, project managers, and team leads.
 
 | Skill | Description |
 |-------|-------------|
+| [alternatives-analysis](../../skills/alternatives-analysis/SKILL.md) | Compare options and make decisions with explicit trade-offs |
+| [large-change](../../skills/large-change/SKILL.md) | Structure multi-phase initiatives and coordinate delivery |
 | [meeting-agendas](../../skills/meeting-agendas/SKILL.md) | Structuring agendas, notes, and action items |
 | [sprint-planning](../../skills/sprint-planning/SKILL.md) | Sprint ceremonies, capacity planning, backlog grooming |
 | [stakeholder-comms](../../skills/stakeholder-comms/SKILL.md) | Status updates, escalations, cross-team communication |

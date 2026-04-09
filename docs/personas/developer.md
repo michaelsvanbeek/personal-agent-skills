@@ -6,7 +6,9 @@ Skills for software engineers, SREs, and DevOps engineers.
 
 | Skill | Description |
 |-------|-------------|
+| [alternatives-analysis](../../skills/alternatives-analysis/SKILL.md) | Compare technical options with explicit criteria and trade-offs |
 | [git-workflow](../../skills/git-workflow/SKILL.md) | Conventional commits, branching, PR standards |
+| [large-change](../../skills/large-change/SKILL.md) | Plan and execute complex changes in stable incremental phases |
 | [markdown-docs](../../skills/markdown-docs/SKILL.md) | README structure, docs folder, ADRs |
 | [code-review](../../skills/code-review/SKILL.md) | Review checklists and feedback patterns |
 | [testing](../../skills/testing/SKILL.md) | Test strategy, patterns, and coverage |

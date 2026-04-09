@@ -6,6 +6,8 @@ Skills for operations managers, program managers, and chiefs of staff.
 
 | Skill | Description |
 |-------|-------------|
+| [alternatives-analysis](../../skills/alternatives-analysis/SKILL.md) | Compare operational options with clear assumptions and trade-offs |
+| [large-change](../../skills/large-change/SKILL.md) | Plan and deliver complex cross-functional changes in phases |
 | [okr-tracking](../../skills/okr-tracking/SKILL.md) | Setting and tracking OKRs and KPIs |
 | [process-docs](../../skills/process-docs/SKILL.md) | Documenting workflows and standard operating procedures |
 | [incident-response](../../skills/incident-response/SKILL.md) | Incident handling, post-mortems, runbooks |
