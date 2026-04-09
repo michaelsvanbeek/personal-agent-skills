@@ -20,6 +20,7 @@
 ## Reference
 
 - [Internal Org Skills Repositories](internal-org-skills.md) — how to build and deploy private skills repos for your organization
+- [mvb Migration State](mvb-migration-state.md) — incremental tracker for aligning mvb-skills with personal-agent-skills
 
 ## Links
 

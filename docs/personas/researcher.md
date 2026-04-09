@@ -6,9 +6,11 @@ Skills for academic researchers, UX researchers, and market researchers.
 
 | Skill | Description |
 |-------|-------------|
-| [literature-review](../../skills/literature-review/SKILL.md) | Synthesizing papers and identifying themes |
-| [citation-standards](../../skills/citation-standards/SKILL.md) | APA, Chicago, and other citation formats |
-| [academic-writing](../../skills/academic-writing/SKILL.md) | Paper structure, abstracts, and academic tone |
+| [alternatives-analysis](../../skills/alternatives-analysis/SKILL.md) | Compare research options and document trade-offs with evidence |
+| [data-analysis](../../skills/data-analysis/SKILL.md) | Run reproducible exploratory analysis and statistical summaries |
+| [data-visualization](../../skills/data-visualization/SKILL.md) | Present findings clearly with static or interactive charts |
+| [markdown-docs](../../skills/markdown-docs/SKILL.md) | Structure research documentation and decision records |
+| [prompt-writing](../../skills/prompt-writing/SKILL.md) | Build and evaluate high-quality prompts for research workflows |
 
 ## Recommended MCP Servers
 

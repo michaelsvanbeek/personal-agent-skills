@@ -6,9 +6,11 @@ Skills for data analysts, business analysts, and BI specialists.
 
 | Skill | Description |
 |-------|-------------|
-| [sql-style](../../skills/sql-style/SKILL.md) | SQL formatting, naming, and query patterns |
-| [chart-design](../../skills/chart-design/SKILL.md) | Choosing chart types, axes, accessibility |
-| [data-storytelling](../../skills/data-storytelling/SKILL.md) | Presenting findings to non-technical audiences |
+| [alternatives-analysis](../../skills/alternatives-analysis/SKILL.md) | Compare analytical options and recommend decisions with explicit criteria |
+| [charts](../../skills/charts/SKILL.md) | Choose chart types and improve readability/accessibility in dashboards |
+| [data-analysis](../../skills/data-analysis/SKILL.md) | Explore, clean, aggregate, and transform datasets with pandas/Polars/DuckDB |
+| [data-visualization](../../skills/data-visualization/SKILL.md) | Build effective analysis plots for notebooks and reports |
+| [logging-metrics](../../skills/logging-metrics/SKILL.md) | Define measurable instrumentation and metrics conventions |
 
 ## Recommended MCP Servers
 

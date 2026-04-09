@@ -10,6 +10,7 @@ Skills for engineering managers, project managers, and team leads.
 | [feature-flags](../../skills/feature-flags/SKILL.md) | Manage progressive rollouts and experiment decisions with lower risk |
 | [large-change](../../skills/large-change/SKILL.md) | Structure multi-phase initiatives and coordinate delivery |
 | [meeting-agendas](../../skills/meeting-agendas/SKILL.md) | Structuring agendas, notes, and action items |
+| [product-management](../../skills/product-management/SKILL.md) | Prioritize initiatives, define specs, and align roadmap trade-offs |
 | [release-management](../../skills/release-management/SKILL.md) | Plan release scope, communication, and launch checkpoints |
 | [markdown-docs](../../skills/markdown-docs/SKILL.md) | Keep plans, decisions, and updates documented and discoverable |
 | [git-workflow](../../skills/git-workflow/SKILL.md) | Understanding team commit and PR patterns |
