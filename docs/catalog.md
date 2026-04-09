@@ -4,6 +4,8 @@ All skills in this repository, sorted alphabetically with tags.
 
 | Skill | Description | Tags |
 |-------|-------------|------|
+| [accessibility-testing](../skills/accessibility-testing/SKILL.md) | Automated accessibility testing and WCAG compliance validation | `developer`, `designer` |
+| [api-design](../skills/api-design/SKILL.md) | REST API design conventions and contract standards | `developer` |
 | [alternatives-analysis](../skills/alternatives-analysis/SKILL.md) | Structured framework for comparing options and recommending decisions | `general`, `developer`, `manager`, `analyst`, `executive` |
 | [async-messaging](../skills/async-messaging/SKILL.md) | Event-driven architecture and asynchronous messaging patterns | `developer`, `operations` |
 | [caching-strategies](../skills/caching-strategies/SKILL.md) | Caching design across HTTP, CDN, app, and client layers | `developer`, `operations` |
@@ -12,6 +14,8 @@ All skills in this repository, sorted alphabetically with tags.
 | [data-visualization](../skills/data-visualization/SKILL.md) | Python data visualization for notebooks, scripts, and reports | `analyst`, `researcher`, `developer` |
 | [database](../skills/database/SKILL.md) | Database design conventions for SQL/PostgreSQL and DynamoDB | `developer`, `operations` |
 | [docker](../skills/docker/SKILL.md) | Docker and container best practices with security-first design | `developer`, `operations` |
+| [error-handling](../skills/error-handling/SKILL.md) | Error handling and resilience patterns for robust services | `developer`, `operations` |
+| [feature-flags](../skills/feature-flags/SKILL.md) | Feature flag design and progressive rollout strategies | `developer`, `manager`, `operations` |
 | [git-workflow](../skills/git-workflow/SKILL.md) | Conventional commits, branching, PR conventions | `developer`, `manager` |
 | [logging-metrics](../skills/logging-metrics/SKILL.md) | Structured logging and metrics design for observability | `developer`, `operations`, `analyst` |
 | [large-change](../skills/large-change/SKILL.md) | Workflow for planning and shipping large, multi-phase changes | `developer`, `manager`, `operations` |
@@ -20,6 +24,7 @@ All skills in this repository, sorted alphabetically with tags.
 | [okrs](../skills/okrs/SKILL.md) | OKR writing, cascading, scoring, and review cycles | `manager`, `operations`, `executive` |
 | [prompt-writing](../skills/prompt-writing/SKILL.md) | Best practices for writing and evaluating LLM prompts | `general`, `developer`, `writer` |
 | [python](../skills/python/SKILL.md) | Python project conventions and coding standards | `developer` |
+| [release-management](../skills/release-management/SKILL.md) | Release management with semantic versioning and release workflows | `developer`, `manager`, `operations` |
 | [retrospectives](../skills/retrospectives/SKILL.md) | Sprint and quarterly retrospective facilitation | `manager`, `operations` |
 | [roadmap-planning](../skills/roadmap-planning/SKILL.md) | Annual and quarterly roadmap planning for engineering teams | `manager`, `executive`, `operations` |
 | [status-updates](../skills/status-updates/SKILL.md) | Writing effective status updates for different audiences and cadences | `manager`, `communication`, `executive` |

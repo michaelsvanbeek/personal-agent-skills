@@ -6,9 +6,9 @@ Skills for UX designers, UI designers, and product designers.
 
 | Skill | Description |
 |-------|-------------|
-| [design-review](../../skills/design-review/SKILL.md) | Reviewing designs for usability and consistency |
-| [accessibility](../../skills/accessibility/SKILL.md) | WCAG compliance, ARIA patterns, keyboard navigation |
-| [component-specs](../../skills/component-specs/SKILL.md) | Specifying components for engineering handoff |
+| [accessibility-testing](../../skills/accessibility-testing/SKILL.md) | Automate WCAG checks and build accessibility regression tests |
+| [charts](../../skills/charts/SKILL.md) | Build accessible chart visuals with clear labels and contrast |
+| [markdown-docs](../../skills/markdown-docs/SKILL.md) | Document UI decisions and component behavior clearly |
 
 ## Recommended MCP Servers
 
@@ -21,9 +21,9 @@ Skills for UX designers, UI designers, and product designers.
 
 ## Getting Started
 
-1. Install design-review and accessibility skills
+1. Install accessibility-testing and charts
 2. Connect Figma MCP server if available
-3. Add component-specs when handing off to engineering
+3. Add markdown-docs when handing off component decisions to engineering
 
 ## Example Prompts
 
