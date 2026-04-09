@@ -15,8 +15,12 @@ All skills in this repository, sorted alphabetically with tags.
 | [logging-metrics](../skills/logging-metrics/SKILL.md) | Structured logging and metrics design for observability | `developer`, `operations`, `analyst` |
 | [markdown-docs](../skills/markdown-docs/SKILL.md) | Documentation structure, formatting, linking | `developer`, `writer`, `general` |
 | [meeting-agendas](../skills/meeting-agendas/SKILL.md) | Structuring agendas, notes, and action items | `manager`, `operations`, `communication` |
+| [okrs](../skills/okrs/SKILL.md) | OKR writing, cascading, scoring, and review cycles | `manager`, `operations`, `executive` |
 | [prompt-writing](../skills/prompt-writing/SKILL.md) | Best practices for writing and evaluating LLM prompts | `general`, `developer`, `writer` |
 | [python](../skills/python/SKILL.md) | Python project conventions and coding standards | `developer` |
+| [retrospectives](../skills/retrospectives/SKILL.md) | Sprint and quarterly retrospective facilitation | `manager`, `operations` |
+| [roadmap-planning](../skills/roadmap-planning/SKILL.md) | Annual and quarterly roadmap planning for engineering teams | `manager`, `executive`, `operations` |
+| [status-updates](../skills/status-updates/SKILL.md) | Writing effective status updates for different audiences and cadences | `manager`, `communication`, `executive` |
 | [testing](../skills/testing/SKILL.md) | Test strategy, patterns, coverage, and evaluation | `developer` |
 | [typescript](../skills/typescript/SKILL.md) | TypeScript coding standards and type safety conventions | `developer` |
 
