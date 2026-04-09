@@ -22,6 +22,9 @@ tags:
 - Auditing an existing project for documentation gaps
 - Establishing documentation conventions
 
+> **Scope:** This skill covers developer-facing docs (README, docs/, ADRs).
+> For in-product explanatory UX, use the ui-design skill.
+
 ---
 
 ## Core Principle
@@ -29,6 +32,10 @@ tags:
 Documentation lives with the code. It is version-controlled, reviewed in PRs,
 and updated alongside the code it describes. The README is the entry point —
 everything else is one or two links away.
+
+- Keep docs in-repo whenever possible.
+- Use one canonical source per topic, then link instead of duplicating.
+- Treat docs updates as part of the feature/fix definition of done.
 
 ---
 
@@ -107,6 +114,26 @@ docs/
 **Every file in `docs/` must be linked from `docs/README.md`.** No orphan
 documents.
 
+### docs/README.md Index Template
+
+```markdown
+# Documentation
+
+## Architecture
+- [Architecture Overview](architecture.md)
+- [Key Concepts](concepts.md)
+
+## Runbooks
+- [Deployment](runbooks/deploy.md)
+- [Rollback](runbooks/rollback.md)
+
+## Decisions
+- [ADR Index](adr/README.md)
+
+## Changes
+- [Migration Guides](changes/)
+```
+
 ---
 
 ## Architecture Decision Records (ADRs)
@@ -144,6 +171,15 @@ What was decided and why.
 
 What follows from this decision — both positive and negative.
 ```
+
+### ADR Status Values
+
+| Status | Meaning |
+|--------|---------|
+| `Proposed` | Under discussion, not yet accepted |
+| `Accepted` | Decision is approved and in effect |
+| `Superseded` | Replaced by a later ADR |
+| `Deprecated` | No longer recommended for new work |
 
 ---
 
