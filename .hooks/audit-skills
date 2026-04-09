@@ -1,0 +1,313 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# audit-skills — Validate all SKILL.md files in the repository.
+#
+# Checks:
+#   1. Frontmatter: name, description, tags
+#   2. Name matches directory
+#   3. Description follows "Use when:" formula with 3+ triggers
+#   4. Tags are from the registry
+#   5. No duplicate skill names
+#   6. Line count under 500
+#   7. Duplicate trigger detection across skills
+#
+# Exit codes:
+#   0 — all checks pass (warnings may be printed)
+#   1 — one or more errors found
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SKILLS_DIR="$REPO_ROOT/skills"
+
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+ERRORS=0
+WARNINGS=0
+PASSED=0
+ERROR_MESSAGES=()
+WARNING_MESSAGES=()
+
+# Known tags from docs/tags.md
+KNOWN_TAGS=(
+    developer manager analyst designer writer researcher
+    operations marketing sales support executive communication general
+)
+
+is_known_tag() {
+    local tag="$1"
+    for known in "${KNOWN_TAGS[@]}"; do
+        if [[ "$tag" == "$known" ]]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Extract YAML frontmatter value (simple single-line or multi-line >- style)
+get_frontmatter_value() {
+    local file="$1"
+    local key="$2"
+    awk -v key="$key" '
+        /^---$/ { block++; next }
+        block == 1 {
+            # Match the key at the start of line
+            if ($0 ~ "^" key ":") {
+                # Check for >- multi-line
+                if ($0 ~ ">-") {
+                    multiline = 1
+                    next
+                }
+                # Single-line value
+                sub("^" key ":[[:space:]]*", "")
+                gsub(/^["'\''"]|["'\''"]$/, "")
+                print
+                exit
+            }
+            if (multiline) {
+                if (/^[[:space:]]/) {
+                    gsub(/^[[:space:]]+/, "")
+                    value = value ? value " " $0 : $0
+                } else {
+                    print value
+                    exit
+                }
+            }
+        }
+        block >= 2 { if (multiline) { print value }; exit }
+    ' "$file"
+}
+
+# Extract tags as array (YAML list items under tags:)
+get_tags() {
+    local file="$1"
+    awk '
+        /^---$/ { block++; next }
+        block == 1 {
+            if (/^tags:/) { in_tags = 1; next }
+            if (in_tags) {
+                if (/^[[:space:]]+-[[:space:]]/) {
+                    sub(/^[[:space:]]+-[[:space:]]*/, "")
+                    gsub(/["'\''"]/, "")
+                    gsub(/[[:space:]]+$/, "")
+                    print
+                } else {
+                    exit
+                }
+            }
+        }
+        block >= 2 { exit }
+    ' "$file"
+}
+
+# Collect all trigger words from a description
+get_triggers() {
+    local desc="$1"
+    # Extract text after "Use when:"
+    local triggers
+    triggers=$(echo "$desc" | sed -n 's/.*Use when:[[:space:]]*//p')
+    # Split on commas and "or"
+    echo "$triggers" | tr ',' '\n' | sed 's/[[:space:]]*or[[:space:]]*$//' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' | sed '/^$/d'
+}
+
+echo ""
+echo -e "${CYAN}Skill Audit${NC}"
+echo "==========="
+echo ""
+echo -e "Scanning: ${CYAN}$SKILLS_DIR${NC}"
+echo ""
+
+# Check skills directory exists
+if [[ ! -d "$SKILLS_DIR" ]]; then
+    echo -e "${RED}ERROR:${NC} skills/ directory not found"
+    exit 1
+fi
+
+# Collect all skill names for duplicate check
+declare -a ALL_NAMES=()
+declare -a ALL_DESCRIPTIONS=()
+declare -a ALL_SKILL_DIRS=()
+
+# Find all SKILL.md files
+SKILL_FILES=()
+while IFS= read -r -d '' f; do
+    SKILL_FILES+=("$f")
+done < <(find "$SKILLS_DIR" -name "SKILL.md" -print0 | sort -z)
+
+if [[ ${#SKILL_FILES[@]} -eq 0 ]]; then
+    echo -e "${YELLOW}WARNING:${NC} No SKILL.md files found in skills/"
+    exit 0
+fi
+
+for skill_file in "${SKILL_FILES[@]}"; do
+    skill_dir="$(dirname "$skill_file")"
+    dir_name="$(basename "$skill_dir")"
+    has_error=0
+
+    # Extract frontmatter
+    name=$(get_frontmatter_value "$skill_file" "name")
+    description=$(get_frontmatter_value "$skill_file" "description")
+    mapfile -t tags < <(get_tags "$skill_file")
+    line_count=$(wc -l < "$skill_file" | tr -d ' ')
+
+    ALL_NAMES+=("$name")
+    ALL_DESCRIPTIONS+=("$description")
+    ALL_SKILL_DIRS+=("$dir_name")
+
+    # Check: name exists
+    if [[ -z "$name" ]]; then
+        ERROR_MESSAGES+=("skills/$dir_name: missing 'name' field in frontmatter")
+        has_error=1
+    fi
+
+    # Check: name matches directory
+    if [[ -n "$name" && "$name" != "$dir_name" ]]; then
+        ERROR_MESSAGES+=("skills/$dir_name: name '$name' does not match directory '$dir_name'")
+        has_error=1
+    fi
+
+    # Check: description exists
+    if [[ -z "$description" ]]; then
+        ERROR_MESSAGES+=("skills/$dir_name: missing 'description' field in frontmatter")
+        has_error=1
+    fi
+
+    # Check: description has "Use when:"
+    if [[ -n "$description" && ! "$description" =~ "Use when:" ]]; then
+        ERROR_MESSAGES+=("skills/$dir_name: description missing 'Use when:' trigger clause")
+        has_error=1
+    fi
+
+    # Check: at least 3 triggers
+    if [[ -n "$description" && "$description" =~ "Use when:" ]]; then
+        trigger_count=$(get_triggers "$description" | wc -l | tr -d ' ')
+        if [[ "$trigger_count" -lt 3 ]]; then
+            ERROR_MESSAGES+=("skills/$dir_name: description has $trigger_count triggers (minimum 3)")
+            has_error=1
+        fi
+    fi
+
+    # Check: tags exist
+    if [[ ${#tags[@]} -eq 0 ]]; then
+        ERROR_MESSAGES+=("skills/$dir_name: missing 'tags' field in frontmatter")
+        has_error=1
+    fi
+
+    # Check: tags are known
+    for tag in "${tags[@]}"; do
+        if ! is_known_tag "$tag"; then
+            ERROR_MESSAGES+=("skills/$dir_name: unknown tag '$tag' (not in tag registry)")
+            has_error=1
+        fi
+    done
+
+    # Check: tag count
+    if [[ ${#tags[@]} -gt 5 ]]; then
+        WARNING_MESSAGES+=("skills/$dir_name: ${#tags[@]} tags (recommended max 5)")
+    fi
+
+    # Check: line count
+    if [[ "$line_count" -gt 500 ]]; then
+        WARNING_MESSAGES+=("skills/$dir_name: $line_count lines (guideline is under 500)")
+    fi
+
+    if [[ $has_error -eq 0 ]]; then
+        PASSED=$((PASSED + 1))
+    fi
+done
+
+# Check: duplicate names
+declare -A name_counts
+for name in "${ALL_NAMES[@]}"; do
+    if [[ -n "$name" ]]; then
+        name_counts["$name"]=$(( ${name_counts["$name"]:-0} + 1 ))
+    fi
+done
+for name in "${!name_counts[@]}"; do
+    if [[ ${name_counts["$name"]} -gt 1 ]]; then
+        ERROR_MESSAGES+=("COLLECTION: duplicate skill name '$name' appears ${name_counts["$name"]} times")
+    fi
+done
+
+# Check: trigger overlap between skills (simple word-overlap heuristic)
+for ((i = 0; i < ${#ALL_DESCRIPTIONS[@]}; i++)); do
+    for ((j = i + 1; j < ${#ALL_DESCRIPTIONS[@]}; j++)); do
+        desc_i="${ALL_DESCRIPTIONS[$i]}"
+        desc_j="${ALL_DESCRIPTIONS[$j]}"
+        dir_i="${ALL_SKILL_DIRS[$i]}"
+        dir_j="${ALL_SKILL_DIRS[$j]}"
+
+        if [[ -z "$desc_i" || -z "$desc_j" ]]; then
+            continue
+        fi
+
+        # Get trigger words for each
+        triggers_i=$(get_triggers "$desc_i" | tr '[:upper:]' '[:lower:]')
+        triggers_j=$(get_triggers "$desc_j" | tr '[:upper:]' '[:lower:]')
+
+        if [[ -z "$triggers_i" || -z "$triggers_j" ]]; then
+            continue
+        fi
+
+        # Count overlapping trigger phrases
+        overlap=0
+        total_i=$(echo "$triggers_i" | wc -l | tr -d ' ')
+        while IFS= read -r trigger; do
+            if echo "$triggers_j" | grep -qiF "$trigger"; then
+                overlap=$((overlap + 1))
+            fi
+        done <<< "$triggers_i"
+
+        if [[ $total_i -gt 0 ]]; then
+            pct=$(( overlap * 100 / total_i ))
+            if [[ $pct -ge 50 ]]; then
+                WARNING_MESSAGES+=("skills/$dir_i + skills/$dir_j: ${pct}% trigger overlap ($overlap of $total_i)")
+            fi
+        fi
+    done
+done
+
+# Count errors
+ERRORS=${#ERROR_MESSAGES[@]}
+WARNINGS=${#WARNING_MESSAGES[@]}
+TOTAL=${#SKILL_FILES[@]}
+
+# Report
+echo ""
+echo -e "${CYAN}AUDIT REPORT${NC}"
+echo "============"
+echo ""
+echo "Skills audited: $TOTAL"
+echo -e "Passed: ${GREEN}$PASSED${NC}"
+echo -e "Warnings: ${YELLOW}$WARNINGS${NC}"
+echo -e "Errors: ${RED}$ERRORS${NC}"
+
+if [[ $ERRORS -gt 0 ]]; then
+    echo ""
+    echo -e "${RED}ERRORS:${NC}"
+    for msg in "${ERROR_MESSAGES[@]}"; do
+        echo -e "  ${RED}✗${NC} $msg"
+    done
+fi
+
+if [[ $WARNINGS -gt 0 ]]; then
+    echo ""
+    echo -e "${YELLOW}WARNINGS:${NC}"
+    for msg in "${WARNING_MESSAGES[@]}"; do
+        echo -e "  ${YELLOW}~${NC} $msg"
+    done
+fi
+
+echo ""
+
+if [[ $ERRORS -gt 0 ]]; then
+    echo -e "${RED}Audit failed.${NC} Fix errors before committing."
+    exit 1
+else
+    echo -e "${GREEN}Audit passed.${NC}"
+    exit 0
+fi
