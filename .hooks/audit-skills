@@ -151,7 +151,11 @@ for skill_file in "${SKILL_FILES[@]}"; do
     # Extract frontmatter
     name=$(get_frontmatter_value "$skill_file" "name")
     description=$(get_frontmatter_value "$skill_file" "description")
-    mapfile -t tags < <(get_tags "$skill_file")
+    # Bash 3.2 compatible tag extraction (no mapfile)
+    tags=()
+    while IFS= read -r tag; do
+        tags+=("$tag")
+    done < <(get_tags "$skill_file")
     line_count=$(wc -l < "$skill_file" | tr -d ' ')
 
     ALL_NAMES+=("$name")
@@ -220,55 +224,80 @@ for skill_file in "${SKILL_FILES[@]}"; do
     fi
 done
 
-# Check: duplicate names
-declare -A name_counts
+# Check: duplicate names (bash 3.2 compatible using sort | uniq -c)
 for name in "${ALL_NAMES[@]}"; do
     if [[ -n "$name" ]]; then
-        name_counts["$name"]=$(( ${name_counts["$name"]:-0} + 1 ))
+        echo "$name"
     fi
-done
-for name in "${!name_counts[@]}"; do
-    if [[ ${name_counts["$name"]} -gt 1 ]]; then
-        ERROR_MESSAGES+=("COLLECTION: duplicate skill name '$name' appears ${name_counts["$name"]} times")
+done | sort | uniq -c | while read -r count name; do
+    if [[ $count -gt 1 ]]; then
+        ERROR_MESSAGES+=("COLLECTION: duplicate skill name '$name' appears $count times")
     fi
 done
 
-# Check: trigger overlap between skills (simple word-overlap heuristic)
+# Check: trigger overlap between skills (optimized O(n*m*log(n)) algorithm for bash 3.2)
+# Build a list of all triggers with their skill indices, then sort to group duplicates
+tmpfile=$(mktemp)
+trap 'rm -f "$tmpfile"' EXIT
+
 for ((i = 0; i < ${#ALL_DESCRIPTIONS[@]}; i++)); do
-    for ((j = i + 1; j < ${#ALL_DESCRIPTIONS[@]}; j++)); do
-        desc_i="${ALL_DESCRIPTIONS[$i]}"
-        desc_j="${ALL_DESCRIPTIONS[$j]}"
-        dir_i="${ALL_SKILL_DIRS[$i]}"
-        dir_j="${ALL_SKILL_DIRS[$j]}"
-
-        if [[ -z "$desc_i" || -z "$desc_j" ]]; then
-            continue
+    desc="${ALL_DESCRIPTIONS[$i]}"
+    if [[ -z "$desc" ]]; then
+        continue
+    fi
+    
+    # Get triggers for this skill and write to temp file with skill index
+    triggers=$(get_triggers "$desc" | tr '[:upper:]' '[:lower:]')
+    if [[ -z "$triggers" ]]; then
+        continue
+    fi
+    
+    while IFS= read -r trigger; do
+        if [[ -n "$trigger" ]]; then
+            echo "$trigger|$i"
         fi
+    done <<< "$triggers"
+done | sort > "$tmpfile"
 
-        # Get trigger words for each
-        triggers_i=$(get_triggers "$desc_i" | tr '[:upper:]' '[:lower:]')
-        triggers_j=$(get_triggers "$desc_j" | tr '[:upper:]' '[:lower:]')
+# Now process the sorted list to find skills that share triggers
+current_trigger=""
+skill_indices=""
 
-        if [[ -z "$triggers_i" || -z "$triggers_j" ]]; then
-            continue
+while IFS='|' read -r trigger skill_idx; do
+    if [[ "$trigger" != "$current_trigger" ]]; then
+        # New trigger - output the previous group if it had multiple skills
+        if [[ -n "$skill_indices" ]]; then
+            # Count overlaps for all pairs in this group
+            for idx1 in $skill_indices; do
+                for idx2 in $skill_indices; do
+                    if [[ $idx1 -lt $idx2 ]]; then
+                        echo "$idx1 $idx2"
+                    fi
+                done
+            done
         fi
-
-        # Count overlapping trigger phrases
-        overlap=0
-        total_i=$(echo "$triggers_i" | wc -l | tr -d ' ')
-        while IFS= read -r trigger; do
-            if echo "$triggers_j" | grep -qiF "$trigger"; then
-                overlap=$((overlap + 1))
-            fi
-        done <<< "$triggers_i"
-
-        if [[ $total_i -gt 0 ]]; then
-            pct=$(( overlap * 100 / total_i ))
-            if [[ $pct -ge 50 ]]; then
-                WARNING_MESSAGES+=("skills/$dir_i + skills/$dir_j: ${pct}% trigger overlap ($overlap of $total_i)")
-            fi
+        current_trigger="$trigger"
+        skill_indices="$skill_idx"
+    else
+        skill_indices="$skill_indices $skill_idx"
+    fi
+done < "$tmpfile" | sort | uniq -c | while read -r count pair; do
+    # count = number of shared triggers, pair = "idx1 idx2"
+    read -r idx1 idx2 <<< "$pair"
+    
+    dir_i="${ALL_SKILL_DIRS[$idx1]}"
+    dir_j="${ALL_SKILL_DIRS[$idx2]}"
+    
+    # Get total trigger count for skill i
+    desc_i="${ALL_DESCRIPTIONS[$idx1]}"
+    total_triggers=$(get_triggers "$desc_i" | wc -l | tr -d ' ')
+    
+    if [[ $total_triggers -gt 0 ]]; then
+        pct=$(( count * 100 / total_triggers ))
+        if [[ $pct -ge 50 ]]; then
+            WARNING_MESSAGES+=("skills/$dir_i + skills/$dir_j: ${pct}% trigger overlap ($count of $total_triggers)")
         fi
-    done
+    fi
 done
 
 # Count errors
